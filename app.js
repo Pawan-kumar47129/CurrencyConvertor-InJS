@@ -28,10 +28,13 @@ let form = document.querySelector("#money");
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
+
   let select = document.getElementsByTagName("select");
   let From = select[0].value;
   let To = select[1].value;
   let amount = document.getElementById("input").value;
+  let para = document.getElementById("err");
+  para.innerHTML ="";
   //let url = `https://api.frankfurter.app/latest?amount=${amount}&from=${From}&to=${To}`;
   let URL=`https://v6.exchangerate-api.com/v6/9d39da9032d89e5616b11f50/latest/${From}`
   fetch(URL)
@@ -41,14 +44,16 @@ form.addEventListener("submit", (e) => {
     .then((data) => {
       console.log(data);
       let calcAmount = data.conversion_rates[To];
+      if(isNaN(amount)){
+        throw Error("Please Enter valid Number");
+      }
       let totalAmount=calcAmount * amount;
       let outPutAmount=parseFloat(totalAmount.toFixed(4));
       let msg = document.querySelector(".msg");
       msg.innerHTML = `${amount} ${From} = ${outPutAmount} ${To}`;
     })
     .catch((err) => {
-      let para = document.getElementById("err");
-      para.innerHTML = "There is a sever error try later";
+      para.innerHTML = err.message;
       console.log(err);
     });
 });
